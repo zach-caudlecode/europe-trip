@@ -197,7 +197,7 @@ const CITIES = [
     { id:'jul16', label:'July 16 (Thu) — Westminster Day', items:[
       {name:"Buckingham Palace State Rooms", time:"9:30am", timeType:'suggested', fams:{he:3,je:2,pa:2},
         desc:"Summer-only opening of the Palace's staterooms, plus a special exhibition and multimedia tour.",
-        badge:{type:'todo', link:'https://www.rct.uk/visit/buckingham-palace'}, note:'Changing of the Guard doesn\'t run on Thursdays, so it\'s been dropped from the day — moved State Rooms earlier instead to build in a buffer ahead of the Westminster Abbey gate attempt at 2:00pm. (bookings.txt to-do originally guessed "~11? can also add on the carriage house" — the carriage house/Royal Mews add-on is still worth considering if there\'s extra time.)'},
+        badge:{type:'todo', link:'https://www.rct.uk/visit/buckingham-palace'}, note:"Changing of the Guard doesn't run on Thursdays, so it's been dropped from the day — moved State Rooms earlier instead to build in a buffer ahead of the Westminster Abbey gate attempt at 2:00pm."},
       {name:"St. James's Park walk", time:"11:00am", timeType:'suggested',
         desc:"A lakeside stroll past pelicans, widely considered one of London's prettiest short walks."},
       {name:"Lunch — Somewhere Near the Park", time:"12:00pm", timeType:'suggested', fams:{he:3,hy:2,je:2,pa:2,ra:2,zl:2},
@@ -206,7 +206,7 @@ const CITIES = [
       {name:"Westminster Abbey (gate entry attempt)", time:"2:00pm", timeType:'sourced', fams:{he:3,je:2,pa:2,ra:2,zl:2},
         desc:"England's coronation church since 1066 — royal tombs, Poets' Corner, and the Lady Chapel.",
         badge:{type:'todo', link:'https://www.westminster-abbey.org/visit-us/plan-your-visit'},
-        note:'bookings.txt: "Westminster is gates only at 2." Not guaranteed — the to-do list flags July 18 as a backup: "*Westminster 18th if people don\'t want to wait for gate tickets."'},
+        note:"Westminster gates only at 2pm today. Not guaranteed, for guaranteed booking look at the 18th."},
       {name:"Parliament Square / Big Ben (exterior)", time:"3:15pm", timeType:'suggested',
         desc:"The Houses of Parliament and Big Ben's clock tower, viewed from outside."},
       {name:"Trafalgar Square", time:"3:45pm", timeType:'suggested',
@@ -253,7 +253,7 @@ const CITIES = [
         note:"Saturday is Borough Market's best day — busy and lively all day, so no rush to get there right at opening."},
       {name:"Westminster Abbey (guaranteed timed-entry, fallback)", time:"11:00am", timeType:'suggested', fams:{he:3,je:2,pa:2,ra:2},
         desc:"England's coronation church since 1066 — royal tombs, Poets' Corner, and the Lady Chapel.",
-        badge:{type:'todo', link:'https://www.westminster-abbey.org/visit-us/plan-your-visit'}, note:'Dated to the 18th by bookings.txt: "*Westminster 18th if people don\'t want to wait for gate tickets." Saturday allows online timed-entry booking, unlike the July 16 gate attempt — exact slot time not yet set.'},
+        badge:{type:'todo', link:'https://www.westminster-abbey.org/visit-us/plan-your-visit'}, note:"Saturday allows online timed-entry booking, unlike the July 16 gate attempt — exact slot time not yet set."},
       {name:"Oxford Street / Carnaby Street shopping", time:"1:00pm", timeType:'suggested',
         desc:"London's main shopping strip and the quirky independent boutiques of Carnaby Street."},
       {name:"Portobello Road Market", time:"2:30pm", timeType:'suggested',
@@ -417,6 +417,13 @@ CITIES.push({
 
 CITIES.push({
   id:'paris', name:'Paris', color:'var(--paris)', dateRange:'July 25–28, 2026', hotel:'Townhouse near Eiffel Tower',
+  citywide:[
+    {name:"Paris Museum Pass (2-day, general admission)",
+      fams:{he:3,hy:2,je:2,pa:2,ra:2,zl:2},
+      desc:"Combined admission pass — covers the Louvre, Sainte-Chapelle, and Notre-Dame (see July 27) plus a wide range of other Paris museums and monuments.",
+      badge:{type:'booked', count:12},
+      note:"12 passes purchased — everyone except Kasey, who's free at most sites as a 17-year-old (11 family members + Zach + Lauren = 12 paying, +Kasey = 13). Valid for 48 hours from the first time it's scanned, so however the group starts using it, it'll cover the entire Paris stay (July 25–28)."},
+  ],
   days:[
     { id:'jul25b', label:'July 25 (Sat) — Arrival Evening', items:[
       {name:"🚗 Arrive Gare du Nord, transfer to townhouse", time:"4:10pm", timeType:'suggested',
@@ -459,11 +466,6 @@ CITIES.push({
         desc:"Esplanade across the river with the classic Eiffel Tower photo."},
     ]},
     { id:'jul27', label:'July 27 (Mon) — Paris Core Day', items:[
-      {name:"Paris Museum Pass (2-day, general admission)",
-        fams:{he:3,hy:2,je:2,pa:2,ra:2,zl:2},
-        desc:"Combined admission pass covering the day's ticketed sites below.",
-        badge:{type:'booked', count:12},
-        note:"12 passes purchased — everyone except Kasey, who's free at most sites as a 17-year-old (11 family members + Zach + Lauren = 12 paying, +Kasey = 13). Covers Louvre, Sainte-Chapelle, and Notre-Dame below."},
       {name:"The Louvre", time:"11:30am", fams:{he:3,hy:2,je:2,pa:2,zl:2},
         desc:"The world's largest art museum, home to the Mona Lisa and the Venus de Milo.",
         badge:{type:'booked', ref:'3 pass refs', detail:'part of museum pass', count:12},
@@ -500,7 +502,7 @@ CITIES.push({
   ]
 });
 
-const DEPARTURE_NOTE = "July 28 (Tue) — Departure Day. No items submitted in the planning forms or bookings.txt for this day.";
+const DEPARTURE_NOTE = "July 28 (Tue) — Departure Day.";
 
 function escHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
@@ -581,12 +583,19 @@ function renderCity(city){
 
   const noteHtml = city.note ? `<div class="city-note">${escHtml(city.note)}</div>` : '';
 
+  const citywideHtml = (city.citywide && city.citywide.length) ? `
+    <div class="day-card">
+      <div class="day-hd">📎 Valid for your entire ${escHtml(city.name)} stay</div>
+      ${city.citywide.map(renderItem).join('')}
+    </div>` : '';
+
   return `<div class="city-block">
     <div class="city-head" style="background:${city.color}">
       <h2>${escHtml(city.name)}</h2>
       <div class="meta">${escHtml(city.dateRange)} · ${escHtml(city.hotel)}</div>
     </div>
     ${noteHtml}
+    ${citywideHtml}
     ${daysHtml}
     ${flexHtml}
   </div>`;
@@ -602,7 +611,7 @@ function renderOverview(){
     </div>`).join('');
   return `
     <h2>Trip at a Glance</h2>
-    <p>13 travelers, 5 planning forms, 4 stops. Family chips come from each family's own planning form. Each day is sorted
+    <p>13 travelers, 6 planning forms, 4 stops. Family chips come from each family's own planning form. Each day is sorted
     chronologically, with suggested times (italic) filling the gaps around confirmed bookings and accounting for rough
     walking/transit time between stops.</p>
     <div class="fam-key">${keys}</div>
