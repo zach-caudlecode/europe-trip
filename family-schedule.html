@@ -115,8 +115,8 @@ body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--
 }
 .fchip.selected{outline:2px solid var(--c);outline-offset:1px}
 
-.flex-block{background:var(--surface);border:1px solid var(--grid);border-top:none;padding:.75rem 1.3rem;border-radius:0 0 10px 10px}
-.flex-block .fbt{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:.4rem}
+.flex-block{background:var(--surface);border:1px solid var(--grid);border-top:none;border-radius:0 0 10px 10px;overflow:hidden}
+.flex-block .flex-items{padding:.75rem 1.3rem}
 .flex-item{font-size:.83rem;margin-bottom:.3rem}
 .flex-item:last-child{margin-bottom:0}
 
@@ -126,7 +126,7 @@ footer{text-align:center;font-size:.75rem;color:var(--muted);padding:2rem 1rem 0
   .hero{padding:1.4rem 1rem 1.1rem}
   .hero h1{font-size:1.25rem}
   .city-head{padding:.8rem 1rem}
-  .day-hd,.item,.flex-block{padding-left:1rem;padding-right:1rem}
+  .day-hd,.item,.flex-block .flex-items{padding-left:1rem;padding-right:1rem}
 
   /* Sticky bar stays a single, swipeable row instead of wrapping to several lines and eating the screen */
   .filterbar-inner{padding:.6rem .8rem}
@@ -579,7 +579,8 @@ function renderCity(city){
 
   const flexHtml = (city.additional && city.additional.length) ? `
     <div class="flex-block">
-      <div class="fbt">Also planning — flexible / unscheduled</div>
+      <div class="day-hd">📌 Also planning — flexible / unscheduled</div>
+      <div class="flex-items">
       ${city.additional.map(a => `<div class="flex-item">
         <span style="font-weight:600">${escHtml(a.name)}</span>
         ${a.desc ? `<div class="item-desc" style="margin-top:.15rem">${escHtml(a.desc)}</div>` : ''}
@@ -587,6 +588,7 @@ function renderCity(city){
         <div class="chiprow" style="margin-top:.25rem">${renderChips(a.fams)}</div>
         ${a.note ? `<div class="item-note">${escHtml(a.note)}</div>` : ''}
       </div>`).join('')}
+      </div>
     </div>` : '';
 
   const noteHtml = city.note ? `<div class="city-note">${escHtml(city.note)}</div>` : '';
