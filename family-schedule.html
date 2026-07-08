@@ -76,8 +76,10 @@ body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--
 
 .day-card{background:var(--surface);border:1px solid var(--grid);border-top:none}
 .city-block .day-card:last-of-type{border-radius:0 0 10px 10px}
-.day-hd{padding:.65rem 1.3rem;background:color-mix(in srgb, var(--grid) 55%, var(--surface));
-  border-bottom:1px solid var(--grid);font-weight:700;font-size:.85rem}
+.day-hd{padding:.85rem 1.3rem .85rem 1.1rem;background:color-mix(in srgb, var(--city-c, var(--ink)) 16%, var(--surface));
+  border-bottom:2px solid color-mix(in srgb, var(--city-c, var(--ink)) 45%, var(--grid));
+  border-left:5px solid var(--city-c, var(--ink));
+  font-weight:800;font-size:1.02rem;letter-spacing:.005em;color:var(--ink)}
 
 .item{padding:.65rem 1.3rem;border-bottom:1px solid var(--grid);transition:opacity .15s}
 .item:last-child{border-bottom:none}
@@ -590,7 +592,7 @@ function renderCity(city){
       ${city.citywide.map(renderItem).join('')}
     </div>` : '';
 
-  return `<div class="city-block">
+  return `<div class="city-block" style="--city-c:${city.color}">
     <div class="city-head" style="background:${city.color}">
       <h2>${escHtml(city.name)}</h2>
       <div class="meta">${escHtml(city.dateRange)} · ${escHtml(city.hotel)}</div>
