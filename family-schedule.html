@@ -176,7 +176,7 @@ const FAMILIES = [
   { id:'je', label:'Dennis & Jeannie', members:'Dennis Caudle · Jeannie Caudle', color:'var(--je)' },
   { id:'pa', label:'Hector & Pat', members:'Hector Viveros · Pat Viveros', color:'var(--pa)' },
   { id:'ra', label:'Ramsey & Keeler', members:'Ramsey · Keeler', color:'var(--ra)' },
-  { id:'zl', label:'Zach & Lauren', members:'No planning form submitted — inferred from booking headcounts', color:'var(--zl)' },
+  { id:'zl', label:'Zach & Lauren', members:'No planning form submitted', color:'var(--zl)' },
 ];
 
 // fams: {famId: count}. A family's form selecting an item without a headcount (or with 0) is read as their full
@@ -567,9 +567,7 @@ function renderOverview(){
     </div>`).join('');
   return `
     <h2>Trip at a Glance</h2>
-    <p>13 travelers, 5 planning forms, 4 stops. Booked-ticket details below come straight from <code>bookings.txt</code>;
-    family chips come from each family's own planning form. Where a booking's headcount runs ahead of what the forms add up to,
-    the gap is attributed to Zach &amp; Lauren, who traveled with the group but didn't submit a form. Each day is sorted
+    <p>13 travelers, 5 planning forms, 4 stops. Family chips come from each family's own planning form. Each day is sorted
     chronologically, with suggested times (italic) filling the gaps around confirmed bookings and accounting for rough
     walking/transit time between stops.</p>
     <div class="fam-key">${keys}</div>
