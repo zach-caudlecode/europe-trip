@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Who's Committed — Europe Trip 2026</title>
+<style>
+:root{
+  --he:#2a78d6; --hy:#1baf7a; --je:#eda100; --pa:#4a3aa7; --ra:#e34948; --zl:#e87ba4;
+  --surface:#fcfcfb; --page:#f2f1ee; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781;
+  --grid:#e1e0d9; --border:rgba(11,11,11,.10); --good:#0ca30c; --warn:#c98100;
+  --london:#1B4F8A; --bath:#7D6608; --bruges:#6B2D3E; --paris:#1A3A6B;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --he:#3987e5; --hy:#199e70; --je:#c98500; --pa:#9085e9; --ra:#e66767; --zl:#d55181;
+    --surface:#1e1e1c; --page:#111110; --ink:#f5f5f3; --ink2:#c3c2b7; --muted:#8f8d86;
+    --grid:#33322f; --border:rgba(255,255,255,.12); --good:#3fc93f; --warn:#f5b93f;
+    --london:#5B9BE0; --bath:#D9B84A; --bruges:#E08FA6; --paris:#7FA8E8;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{overflow-x:hidden}
+body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--page);color:var(--ink);line-height:1.45}
+.wrap{max-width:880px;margin:0 auto;padding:0 1rem 4rem}
+
+.hero{background:linear-gradient(135deg,#0F172A,#1E3A5F);color:#fff;padding:2rem 1.25rem 1.5rem;text-align:center}
+.hero h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em}
+.hero p{margin-top:.4rem;color:#B9C6DA;font-size:.9rem}
+
+.filterbar{position:sticky;top:0;z-index:50;background:var(--surface);border-bottom:1px solid var(--grid);
+  box-shadow:0 1px 6px rgba(0,0,0,.06)}
+.filterbar-inner{max-width:880px;margin:0 auto;padding:.7rem 1rem}
+.filter-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:.4rem}
+.fam-toggles{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
+.fam-btn{
+  --c: var(--ink);
+  appearance:none;border:1.5px solid var(--c);background:transparent;color:var(--ink);
+  border-radius:20px;padding:.32rem .7rem;font-size:.78rem;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;gap:.35rem;transition:all .12s;
+}
+.fam-btn .dot{width:9px;height:9px;border-radius:50%;background:var(--c);flex-shrink:0}
+.fam-btn:hover{background:color-mix(in srgb, var(--c) 12%, transparent)}
+.fam-btn.active{background:var(--c);color:#fff}
+.fam-btn.active .dot{background:#fff}
+.reset-btn{appearance:none;border:1.5px dashed var(--muted);background:transparent;color:var(--muted);
+  border-radius:20px;padding:.32rem .7rem;font-size:.76rem;cursor:pointer;flex-shrink:0}
+.reset-btn:hover{color:var(--ink);border-color:var(--ink)}
+
+.legend-row{max-width:880px;margin:0 auto;padding:.6rem 1rem;display:flex;flex-wrap:wrap;gap:.5rem .9rem;font-size:.72rem;color:var(--muted)}
+.legend-row b{color:var(--ink2)}
+.legend-row i.suggested-sample{font-style:italic;color:var(--muted)}
+.leg-swatch{display:inline-flex;align-items:center;gap:.3rem}
+.leg-badge{display:inline-block;padding:.05rem .4rem;border-radius:3px;font-size:.65rem;font-weight:700}
+
+.overview{background:var(--surface);border:1px solid var(--grid);border-radius:10px;padding:1rem 1.25rem;margin:1.25rem 0}
+.overview h2{font-size:1rem;margin-bottom:.5rem}
+.overview p{font-size:.85rem;color:var(--ink2);margin-bottom:.4rem}
+.overview .fam-key{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.5rem;margin-top:.6rem}
+.fam-key-item{display:flex;gap:.5rem;align-items:flex-start;font-size:.78rem;border-left:3px solid var(--c);padding:.15rem .6rem}
+.fam-key-item .fkn{font-weight:700}
+.fam-key-item .fkm{color:var(--muted);font-size:.72rem}
+
+.city-block{margin-top:2rem}
+.city-head{border-radius:10px 10px 0 0;padding:1rem 1.3rem;color:#fff}
+.city-head h2{font-size:1.2rem;font-weight:700}
+.city-head .meta{font-size:.78rem;opacity:.85;margin-top:.2rem}
+.city-note{background:var(--surface);border:1px solid var(--grid);border-top:none;padding:.7rem 1.3rem;font-size:.83rem;color:var(--ink2);line-height:1.55;white-space:pre-line}
+.city-note b{color:var(--ink)}
+
+.transit-divider{background:var(--surface);border:1px dashed var(--grid);border-radius:8px;
+  padding:.7rem 1rem;margin:.9rem 0;font-size:.8rem;color:var(--ink2);display:flex;gap:.6rem;align-items:flex-start}
+.transit-divider .ti{font-size:1rem;flex-shrink:0}
+.transit-divider .td-label{font-weight:700;color:var(--ink);margin-bottom:.15rem}
+.transit-divider .td-note{font-style:italic;color:var(--muted)}
+
+.day-card{background:var(--surface);border:1px solid var(--grid);border-top:none}
+.city-block .day-card:last-of-type{border-radius:0 0 10px 10px}
+.day-hd{padding:.65rem 1.3rem;background:color-mix(in srgb, var(--grid) 55%, var(--surface));
+  border-bottom:1px solid var(--grid);font-weight:700;font-size:.85rem}
+
+.item{padding:.65rem 1.3rem;border-bottom:1px solid var(--grid);transition:opacity .15s}
+.item:last-child{border-bottom:none}
+.item.transit-item{background:color-mix(in srgb, var(--grid) 35%, transparent)}
+.item.dim{opacity:.3}
+.item.match{background:color-mix(in srgb, var(--hl,var(--ink)) 6%, transparent)}
+.item.cancelled{opacity:.6}
+.item.cancelled .item-name{text-decoration:line-through;color:var(--muted);font-weight:500}
+.item-top{display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;align-items:baseline}
+.item-name{font-size:.9rem;font-weight:600}
+.item-time{font-size:.72rem;color:var(--ink2);font-weight:700;white-space:nowrap}
+.item-time.suggested{font-style:italic;color:var(--muted);font-weight:600}
+.item-desc{font-size:.8rem;color:var(--ink2);margin-top:.2rem;line-height:1.45}
+.item-note{font-size:.76rem;color:var(--ink2);margin-top:.25rem;line-height:1.5}
+.item-note.gap{font-style:italic;color:var(--muted)}
+
+.badges{margin-top:.35rem;display:flex;flex-wrap:wrap;gap:.35rem;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:.25rem;padding:.1rem .45rem;border-radius:4px;
+  font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+.badge.booked{background:color-mix(in srgb, var(--good) 18%, transparent);color:var(--good)}
+.badge.todo{background:color-mix(in srgb, var(--warn) 20%, transparent);color:var(--warn)}
+.badge.cancelled{background:color-mix(in srgb, var(--muted) 22%, transparent);color:var(--muted)}
+.booking-meta{font-size:.73rem;color:var(--ink2)}
+.book-link{font-size:.73rem;font-weight:700;color:var(--warn);text-decoration:underline;text-underline-offset:2px}
+.book-link:hover{opacity:.75}
+
+.chiprow{margin-top:.4rem;display:flex;flex-wrap:wrap;gap:.3rem}
+.fchip{
+  --c: var(--ink);
+  font-size:.71rem;font-weight:600;padding:.12rem .5rem;border-radius:20px;
+  background:color-mix(in srgb, var(--c) 16%, transparent);color:var(--c);
+  border:1px solid color-mix(in srgb, var(--c) 40%, transparent);
+}
+.fchip.selected{outline:2px solid var(--c);outline-offset:1px}
+
+.flex-block{background:var(--surface);border:1px solid var(--grid);border-top:none;padding:.75rem 1.3rem;border-radius:0 0 10px 10px}
+.flex-block .fbt{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:.4rem}
+.flex-item{font-size:.83rem;margin-bottom:.3rem}
+.flex-item:last-child{margin-bottom:0}
+
+footer{text-align:center;font-size:.75rem;color:var(--muted);padding:2rem 1rem 0}
+
+@media(max-width:640px){
+  .hero{padding:1.4rem 1rem 1.1rem}
+  .hero h1{font-size:1.25rem}
+  .city-head{padding:.8rem 1rem}
+  .day-hd,.item,.flex-block{padding-left:1rem;padding-right:1rem}
+
+  /* Sticky bar stays a single, swipeable row instead of wrapping to several lines and eating the screen */
+  .filterbar-inner{padding:.6rem .8rem}
+  .fam-toggles{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+    margin:0 -.8rem;padding:0 .8rem .2rem}
+  .fam-toggles::-webkit-scrollbar{display:none}
+  .fam-btn,.reset-btn{padding:.5rem .8rem}
+  .legend-row{padding:.6rem .8rem;gap:.45rem .7rem}
+  .item-top{gap:.4rem .6rem}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Who's Committed — Europe Trip 2026</h1>
+  <p>July 15–28, 2026 · 13 Travelers · London → Bath → Bruges → Paris</p>
+</div>
+
+<div class="filterbar">
+  <div class="filterbar-inner">
+    <div class="filter-label">Filter by family — tap to highlight what they're committed to</div>
+    <div class="fam-toggles" id="famToggles"></div>
+  </div>
+</div>
+<div class="legend-row">
+  <span class="leg-swatch"><span class="leg-badge badge booked" style="position:static">BOOKED</span> confirmed ticket in bookings.txt</span>
+  <span class="leg-swatch"><span class="leg-badge badge todo" style="position:static">TO BOOK</span> still on the to-do list</span>
+  <span class="leg-swatch"><b>9:00am</b> = time confirmed / sourced</span>
+  <span class="leg-swatch"><i class="suggested-sample">9:00am</i> = suggested pacing, not confirmed</span>
+  <span class="leg-swatch"><b>Chip ×N</b> = family's committed headcount</span>
+</div>
+
+<div class="wrap">
+  <div class="overview" id="overviewCard"></div>
+  <div id="cities"></div>
+  <footer>
+    Built from the 5 family planning forms + bookings.txt. Zach &amp; Lauren submitted no planning form of their own —
+    their commitments are inferred only where a confirmed booking's headcount exceeds what the 5 forms add up to.
+    Times without a booking or bookings.txt reference are suggested pacing (shown in italics), sequenced with rough
+    walking/transit gaps between stops — treat them as a starting point, not a reservation.
+  </footer>
+</div>
+
+<script>
+const FAMILIES = [
+  { id:'he', label:'Heather, Luke & Kasey', members:'Heather · Luke · Kasey', color:'var(--he)' },
+  { id:'hy', label:'Eric & Hillary', members:'Eric Bryan · Hillary Bryan', color:'var(--hy)' },
+  { id:'je', label:'Dennis & Jeannie', members:'Dennis Caudle · Jeannie Caudle', color:'var(--je)' },
+  { id:'pa', label:'Hector & Pat', members:'Hector Viveros · Pat Viveros', color:'var(--pa)' },
+  { id:'ra', label:'Ramsey & Keeler', members:'Ramsey · Keeler', color:'var(--ra)' },
+  { id:'zl', label:'Zach & Lauren', members:'No planning form submitted — inferred from booking headcounts', color:'var(--zl)' },
+];
+
+// fams: {famId: count}. A family's form selecting an item without a headcount (or with 0) is read as their full
+// party size — omitting a family entirely is the only way to mean "not on their list at all."
+// timeType: 'booked' (ticketed, has badge) | 'sourced' (time comes from a bookings.txt to-do note) | 'suggested' (pacing estimate, no source)
+const CITIES = [
+{
+  id:'london', name:'London', color:'var(--london)', dateRange:'July 15–19, 2026', hotel:'Middle Eight Covent Garden Hotel',
+  days:[
+    { id:'jul15', label:'July 15 (Wed) — Arrival Day', items:[
+      {name:"Covent Garden Market", time:"1:00pm", timeType:'suggested',
+        desc:"Covered market with street performers, boutique shops, and food stalls."},
+      {name:"Seven Dials + Neal's Yard", time:"1:45pm", timeType:'suggested',
+        desc:"A Victorian seven-way junction of independent shops, with a hidden painted courtyard just off it."},
+      {name:"Piccadilly Circus + Leicester Square", time:"2:30pm", timeType:'suggested',
+        desc:"Neon-lit landmark junction and the heart of the West End theatre and cinema district."},
+    ]},
+    { id:'jul16', label:'July 16 (Thu) — Westminster Day', items:[
+      {name:"Buckingham Palace State Rooms", time:"9:30am", timeType:'suggested', fams:{he:3,je:2,pa:2},
+        desc:"Summer-only opening of the Palace's staterooms, plus a special exhibition and multimedia tour.",
+        badge:{type:'todo', link:'https://www.rct.uk/visit/buckingham-palace'}, note:'Changing of the Guard doesn\'t run on Thursdays, so it\'s been dropped from the day — moved State Rooms earlier instead to build in a buffer ahead of the Westminster Abbey gate attempt at 2:00pm. (bookings.txt to-do originally guessed "~11? can also add on the carriage house" — the carriage house/Royal Mews add-on is still worth considering if there\'s extra time.)'},
+      {name:"St. James's Park walk", time:"11:00am", timeType:'suggested',
+        desc:"A lakeside stroll past pelicans, widely considered one of London's prettiest short walks."},
+      {name:"Lunch — Somewhere Near the Park", time:"12:00pm", timeType:'suggested', fams:{he:3,hy:2,je:2,pa:2,ra:2,zl:2},
+        desc:"A casual lunch stop in or near St. James's Park.",
+        note:"St. James's Park Café (formerly Inn the Park) is an easy, no-fuss option right in the park, but may feel like a quicker meal than an experience."},
+      {name:"Westminster Abbey (gate entry attempt)", time:"2:00pm", timeType:'sourced', fams:{he:3,je:2,pa:2,ra:2,zl:2},
+        desc:"England's coronation church since 1066 — royal tombs, Poets' Corner, and the Lady Chapel.",
+        note:'bookings.txt: "Westminster is gates only at 2." Not guaranteed — the to-do list flags July 18 as a backup: "*Westminster 18th if people don\'t want to wait for gate tickets."'},
+      {name:"Parliament Square / Big Ben (exterior)", time:"3:15pm", timeType:'suggested',
+        desc:"The Houses of Parliament and Big Ben's clock tower, viewed from outside."},
+      {name:"Trafalgar Square", time:"3:45pm", timeType:'suggested',
+        desc:"Nelson's Column and the bronze lion statues, London's traditional civic heart."},
+      {name:"Dinner — Dishoom Covent Garden", time:"7:00pm", timeType:'suggested', fams:{he:3,hy:2,je:2,pa:2,ra:2,zl:2},
+        desc:"Buzzy Bombay café, famous for its black dal and bacon naan rolls.",
+        note:"If we can't get a reservation here, we'll look at another Indian option nearby instead."},
+    ]},
+    { id:'jul17', label:"July 17 (Fri) — St. Paul's + Harry Potter", items:[
+      {name:"St. Paul's Cathedral", time:"9:00am",
+        fams:{he:3,hy:2,je:2,pa:2,ra:2,zl:2},
+        desc:"Wren's baroque masterpiece — dome climb, whispering gallery, and crypt.",
+        badge:{type:'booked', ref:'XYHRK9H8', detail:'9 adult + 3 senior + 1 youth', count:13},
+        note:"13 booked = the full group. All 5 families (11) + Zach & Lauren (2)."},
+      {name:"Chelsea FC Stadium Tour — Stamford Bridge", time:"11:00am", timeType:'suggested', fams:{ra:2},
+        desc:"Behind-the-scenes tour of Stamford Bridge, home of Chelsea FC.",
+        note:"Ramsey & Keeler's own plan for the day, separate from the St. Paul's/theatre group — \"we will go to Chelsea Stadium and bum around until dinner and meet up with you all.\""},
+      {name:"Pre-show Lunch — Frenchie Covent Garden or Hawksmoor Seven Dials", time:"11:30am", timeType:'suggested', fams:{he:3,hy:2,pa:2},
+        desc:"French-inspired bistro or one of London's best-regarded steakhouses."},
+      {name:"Warner Bros. Studio Tour (alternative to Cursed Child)", time:"Depart ~1:00pm",
+        fams:{hy:2},
+        desc:"Behind-the-scenes look at the actual sets, props, and costumes from the Harry Potter films.",
+        badge:{type:'booked', detail:'Paid by Eric', count:2},
+        note:"2 tickets booked — Eric & Hillary, doing this instead of Cursed Child."},
+      {name:"Harry Potter & the Cursed Child (Parts 1 & 2)", time:"Part 1: 2:00pm · Part 2: 7:00pm",
+        fams:{he:3,je:1,pa:2},
+        desc:"Two-part stage play continuing the Harry Potter story, at the Palace Theatre.",
+        badge:{type:'booked', ref:'U000-000V-2ZV6-LDNX', count:6},
+        note:"6 tickets booked — matches exactly: Heather's family (3) + Jeannie only (1) + Hector & Pat (2). Dennis is sitting this one out and doing something else with anyone else not attending."},
+      {name:"Dinner between shows — The Ivy or J. Sheekey", time:"5:00pm", timeType:'suggested', fams:{he:3,hy:2,je:1,pa:2,ra:2},
+        desc:"Covent Garden institution or a renowned seafood spot.",
+        note:"Squeezed between Part 1 ending (~4:30pm) and Part 2's 7:00pm curtain."},
+    ]},
+    { id:'jul18', label:"July 18 (Sat) — Regent's Park / Free Day", items:[
+      {name:"South Bank walk — Waterloo Bridge → Borough Market", time:"9:00am", timeType:'suggested',
+        desc:"Riverside walk past street performers and book stalls, heading toward Borough Market."},
+      {name:"Borough Market", time:"9:45am", timeType:'suggested',
+        desc:"London's oldest food market — fresh produce, street food, and cheese stalls.",
+        note:"Saturday is Borough Market's best day — busy and lively all day, so no rush to get there right at opening."},
+      {name:"Westminster Abbey (guaranteed timed-entry, fallback)", time:"11:00am", timeType:'suggested', fams:{he:3,je:2,pa:2,ra:2},
+        desc:"England's coronation church since 1066 — royal tombs, Poets' Corner, and the Lady Chapel.",
+        badge:{type:'todo', link:'https://www.westminster-abbey.org/visit-us/plan-your-visit'}, note:'Dated to the 18th by bookings.txt: "*Westminster 18th if people don\'t want to wait for gate tickets." Saturday allows online timed-entry booking, unlike the July 16 gate attempt — exact slot time not yet set.'},
+      {name:"Oxford Street / Carnaby Street shopping", time:"1:00pm", timeType:'suggested',
+        desc:"London's main shopping strip and the quirky independent boutiques of Carnaby Street."},
+      {name:"Portobello Road Market", time:"2:30pm", timeType:'suggested',
+        desc:"Notting Hill's famous antiques, vintage, and street-food market.",
+        note:"Shifted to the afternoon (moved off the original Sunday travel-day slot, since Saturday is its best day). Serious antique-hunting is best early, but the general/vintage market stays lively well into the afternoon, so this fits both markets into one day without splitting the group in the morning — a short hop from Carnaby Street."},
+      {name:"Queen Mary's Rose Garden — Regent's Park", time:"4:00pm", timeType:'suggested',
+        desc:"12,000 roses in Regent's Park's Inner Circle, at peak bloom in July."},
+      {name:"Umbrella Alley", time:"5:00pm", timeType:'suggested',
+        desc:"A colorful hanging-umbrella installation, a popular photo spot.",
+        note:"Moved here from arrival day — the address (Chalk Farm Rd, NW1 8AH) is actually in Camden, not near Covent Garden, so it didn't fit that tightly-clustered walking day. It's a short walk from Regent's Park's north end (along the Regent's Canal towpath through Primrose Hill, or a couple of tube stops via Camden Town) — a natural add-on after the Rose Garden."},
+      {name:"Dinner — near Regent's Park or Petersham Nurseries / Café Murano", time:"7:00pm", timeType:'suggested', fams:{he:3,hy:2,je:2,pa:2},
+        desc:"Casual dinner options around Primrose Hill and Regent's Park."},
+    ]},
+    { id:'jul19t', label:'July 19 (Sun) — Travel Day: London → Bath', items:[
+      {name:"🚆 Train: London Paddington → Bath Spa", time:"11:30am",
+        desc:"Direct Great Western Railway service to Bath. Arrives 12:50pm (1h20min journey).",
+        badge:{type:'booked', count:13},
+        note:"13 seats booked. ~15–20 min from the Covent Garden hotel to Paddington — Elizabeth line from Tottenham Court Road is the fastest tube option, or taxi."},
+    ]},
+  ],
+  additional:[
+    {name:"Tower of London", desc:"Crown Jewels and Beefeaters within the historic riverside fortress.", fams:{hy:2}},
+  ]
+},
+{
+  id:'bathwells', name:'Bath', color:'var(--bath)', dateRange:'July 19–21, 2026', hotel:'Private Home near Downside, Shepton Mallet',
+  note:"Only the Roman Baths, Thermae Bath Spa, and the private chef dinner are fixed for this leg (all July 20) — everything else, including all of arrival day (July 19), is open. A few options to fill that time, each with a realistic sense of how long it takes to actually enjoy it (not just get there), plus a sports-pub option for each in case that's where you end up on arrival night for the World Cup Final:\n\n• Bath — Pulteney Bridge + Royal Crescent is an easy ~1–1.5 hr walk, or linger longer around the Milsom Street shops (~2–2.5 hrs total with the ~20 min drive each way from Downside). Soccer pub: LUDO — 22 TVs, right above Bath Spa Station. Bath Brew House (confirmed wall-to-wall World Cup 2026 coverage including the Final), Assembly Inn, and The Pig & Fiddle are all solid backups if it's full.\n\n• Castle Combe / Cotswolds — Castle Combe itself is small; ~45 min–1 hr covers a proper walk through the village. Treat it as a fuller Cotswolds half-day (~3–4 hrs total, including the ~50 min drive each way from Downside) if you want time to see more of the surrounding countryside. Soccer pub: Castle Combe doesn't really have a proper sports pub — probably best to head back to Bath for the match rather than count on finding a screen out there.\n\n• Wells — ~15 min drive. Wells Cathedral (~45 min–1 hr) + Bishop's Palace & Gardens (~45 min–1 hr) + a wander around the market square is a relaxed ~3–3.5 hrs total with travel. Soccer pub: The Kings Head — confirmed wall-to-wall coverage from TNT Sports, Sky Sports, and Amazon Prime.\n\n• Frome — independent shops on Catherine Hill, Black Swan Arts, and Victoria Park make for an easy ~2 hr browse; ~15 min drive each way from Downside (~2.5 hrs total) — about the same distance as Wells. Note: the monthly Frome Independent Market only runs the first Sunday of the month, so it won't be on this visit (July 19 is the third Sunday). Soccer pub: The Blue Boar — confirmed showing Premier League, Champions League, and World Cup matches live on a proper big-screen/sound setup, right in the town centre.\n\n• Shepton Mallet (staying close to the house) — for those who'd rather not travel far on arrival evening. Soccer pub: King William — live Sky Sports on big screens, voted Shepton Mallet's favourite pub for 2026. The Charlton Inn (also central Shepton Mallet, confirmed live sports) is a good backup, and The Horseshoe Inn is a quieter option with its own sports TV area.",
+  days:[
+    { id:'jul20', label:'July 20 (Mon) — Roman Baths & Thermae Spa', items:[
+      {name:"Roman Baths", time:"1:00pm",
+        fams:{he:3,hy:2,je:2,pa:2,ra:2,zl:2},
+        desc:"Remarkably preserved Roman bathing complex built around a natural hot spring.",
+        badge:{type:'booked', ref:'RBO84THMCV8AZ', detail:'9 adult + 3 senior + 1 child', count:13},
+        note:"13 booked = all 5 families (11) + Zach & Lauren (2). Clean match."},
+      {name:"Thermae Bath Spa", time:"Sessions at 3:30pm (5) & 4:00pm (6)",
+        fams:{he:3,hy:2,ra:2,zl:2},
+        desc:"Modern rooftop thermal pool fed by the same natural hot springs as the Roman Baths.",
+        badge:{type:'booked', ref:'2010700 & 2010701', count:11},
+        note:"11 booked. Heather + Eric & Hillary + Ramsey & Keeler (7) + Zach & Lauren (2) = 9. 2 seats still unaccounted for — Dennis & Jeannie's and Hector & Pat's forms didn't select Thermae, worth confirming who else is going."},
+      {name:"Private Chef Dinner at home (Night 1)", time:"7:30pm", timeType:'suggested', fams:{he:3,hy:2,je:2,pa:2,ra:2,zl:2},
+        desc:"In-home dinner prepared by a private chef.",
+        note:"~20 min drive back to Downside after the spa, so allow a bit of buffer before the chef's arrival."},
+    ]},
+    { id:'jul21t', label:'July 21 (Tue) — Travel Day: Downside → Bruges', items:[
+      {name:"🚗 Transfer: Downside → Bath (return rental cars)", time:"10:15am", timeType:'suggested',
+        desc:"~20 min drive into Bath to return the rental cars.",
+        note:"Arrive ~10:35am, leaving a comfortable ~35 min for car return and the walk to the platform before the 11:13am train."},
+      {name:"🚆 Train: Bath Spa → London Paddington", time:"11:13am",
+        desc:"Great Western Railway direct service to London. Arrives 12:36pm (~1h23min journey).",
+        badge:{type:'booked', count:13},
+        note:"13 seats booked."},
+      {name:"🚆 Transfer: Paddington → St Pancras", time:"12:36pm", timeType:'suggested',
+        desc:"~15–20 min by tube (Elizabeth line is fastest) or taxi across central London.",
+        note:"Puts the group at St Pancras by ~1:00pm, a comfortable ~2 hr buffer before the 3:04pm Eurostar — plenty of room for the 60–90 min check-in/security window Eurostar recommends for London departures."},
+      {name:"🚆 Eurostar + connecting train: London St Pancras → Bruges", time:"3:04pm",
+        desc:"Eurostar to Brussels, then an onward train to Bruges. Arrives 7:26pm (~4h22min total, including the Brussels connection).",
+        badge:{type:'booked', count:13},
+        note:"13 seats booked."},
+    ]},
+  ],
+  additional:[
+    {name:"Lacock Abbey", desc:"National Trust abbey used as a filming location for Harry Potter and Pride & Prejudice.", fams:{hy:2}},
+    {name:"Golf — Bath Golf Club", desc:"Historic hillside course with panoramic views over Bath.", fams:{he:1,je:1,zl:1}, note:"Secondary option — golf in Belgium (Royal Golf Club Oostende, July 24) is the priority given the limited time here in Bath."},
+  ]
+},
+];
+
+CITIES.push({
+  id:'bruges', name:'Bruges', color:'var(--bruges)', dateRange:'July 21–25, 2026', hotel:'Hotel Ter Duinen',
+  days:[
+    { id:'jul21b', label:'July 21 (Tue) — Arrival Evening', items:[
+      {name:"Evening walk — Markt square", time:"7:00pm", timeType:'suggested',
+        desc:"Bruges' main square, with the illuminated Belfry as backdrop."},
+      {name:"Dinner — In 't Nieuw Museum or De Vlaamsche Pot", time:"8:00pm", timeType:'suggested', fams:{he:3,hy:2,je:2,pa:2,ra:2,zl:2},
+        desc:"Traditional Flemish cooking."},
+      {name:"Belgian National Day fireworks", time:"10:00pm", timeType:'suggested',
+        desc:"Fireworks marking Belgium's national holiday."},
+    ]},
+    { id:'jul22', label:'July 22 (Wed) — Bruges Core', items:[
+      {name:"Belfort (Belfry of Bruges)", time:"9:00am", timeType:'suggested', fams:{he:3,pa:2,ra:2,zl:2},
+        desc:"366-step climb up Bruges' medieval bell tower."},
+      {name:"Basilica of the Holy Blood", time:"10:00am", timeType:'suggested', fams:{he:3,pa:2,ra:2,zl:2},
+        desc:"Twin chapel said to house a relic of Christ's blood."},
+      {name:"Church of Our Lady — Michelangelo's Madonna and Child", time:"10:45am", timeType:'suggested', fams:{he:3,je:2,pa:2,ra:2,zl:2},
+        desc:"Home to Michelangelo's Madonna and Child, his only sculpture to leave Italy in his lifetime."},
+      {name:"Rozenhoedkaai (Quay of the Rosary)", time:"11:30am", timeType:'suggested',
+        desc:"The most photographed canal bend in Bruges."},
+      {name:"Canal Boat Tour (~30 min)", time:"1:30pm", timeType:'sourced', fams:{he:3,hy:2,je:2,pa:2,zl:2},
+        desc:"A 30-minute boat ride through the historic canals.",
+        badge:{type:'todo', link:'https://www.visitbruges.be/en/things-to-do/sightseeing/bruges-boat'}, note:"First come, first served (no advance online booking — tickets are bought at the jetty), so really about arriving on time rather than a reservation."},
+      {name:"Princely Beguinage Ten Wijngaerde", time:"2:15pm", timeType:'suggested',
+        desc:"Tranquil walled courtyard once home to a community of beguine women."},
+      {name:"Straffe Hendrik Brewery Tour", time:"3:00pm", timeType:'sourced', fams:{he:3,hy:2,je:1,pa:2,zl:2},
+        desc:"Working brewery tour ending on a rooftop terrace with views over Bruges.",
+        badge:{type:'todo', link:'https://www.halvemaan.be/en/visit/brewery'}, note:"Jeannie is sitting this one out while Dennis goes."},
+      {name:"Chocolate shopping — The Chocolate Line / Dumon", time:"4:15pm", timeType:'suggested',
+        desc:"Bruges' well-known chocolatiers along Katelijnestraat and Simon Stevinplein."},
+      {name:"Dinner — Den Gouden Karpel or Bistro Christophe", time:"7:00pm", timeType:'suggested', fams:{he:3,hy:2,je:2,pa:2,ra:2},
+        desc:"Local seafood spot or a neighborhood bistro."},
+    ]},
+    { id:'jul23', label:'July 23 (Thu) — Ghent Day Trip', items:[
+      {name:"🚆 Train: Bruges ⇄ Ghent Sint-Pieters", time:"9:00am", timeType:'suggested', fams:{he:3,hy:2,je:2,pa:2,ra:2,zl:2},
+        desc:"Direct intercity train, ~30 min each way.", note:"~30 min each way."},
+      {name:"Ghent Altarpiece — St. Bavo's Cathedral", time:"9:45am", timeType:'suggested', fams:{he:3,je:2,pa:2,ra:2,zl:2},
+        desc:"Van Eyck's monumental 15th-century altarpiece."},
+      {name:"Gravensteen (Castle of the Counts)", time:"10:45am", timeType:'suggested', fams:{he:3,hy:2,pa:2,ra:2,zl:2},
+        desc:"Medieval castle with sweeping views over Ghent."},
+      {name:"Lunch — Belga Queen Ghent (Graslei waterfront)", time:"12:00pm", timeType:'suggested', fams:{he:3,hy:2,je:2,pa:2,ra:2,zl:2},
+        desc:"Upscale Belgian dining on the Graslei waterfront."},
+      {name:"Patershol neighborhood walk", time:"1:45pm", timeType:'suggested',
+        desc:"Medieval lanes in Ghent's old tanners' quarter."},
+      {name:"🚆 Train: Ghent → Bruges", time:"5:30pm", timeType:'suggested',
+        desc:"Return leg back to Bruges.", note:"~30 min — return in time to freshen up before dinner."},
+      {name:"Dinner — De Garre or Tom's Diner (Bruges)", time:"7:30pm", timeType:'suggested', fams:{he:3,hy:2,je:2,pa:2,ra:2,zl:2},
+        desc:"Hidden-alley beer café or a casual Bruges diner."},
+    ]},
+    { id:'jul24', label:'July 24 (Fri) — Golf + Damme', items:[
+      {name:"Golf — Royal Golf Club Oostende (PRIMARY — rental clubs available)", time:"9:00am tee time", timeType:'suggested', fams:{he:1,je:1,zl:1},
+        desc:"Coastal golf course near Ostend.",
+        note:"Backup: Golf — Damme Golf & Country Club — a closer course near Bruges if Oostende falls through."},
+      {name:"Bike to Damme — canal towpath (minor; not everyone)", time:"10:00am", timeType:'suggested', fams:{he:3},
+        desc:"Flat canal-side cycle route to the small town of Damme."},
+      {name:"Lamme Goedzak tourist boat — Damme → Bruges", time:"3:00pm", timeType:'suggested', fams:{he:3,pa:2},
+        desc:"Historic canal boat back from Damme to Bruges."},
+      {name:"Dinner — Heer Halewijn or Assiette Blanche", time:"7:00pm", timeType:'suggested', fams:{he:3,hy:2,pa:2,ra:2},
+        desc:"Local Bruges dinner spot."},
+    ]},
+    { id:'jul25t', label:'July 25 (Sat) — Morning Bruges, then Paris', items:[
+      {name:"Final morning canal walk", time:"8:00am", timeType:'suggested',
+        desc:"A last quiet stroll along the canals before the crowds arrive."},
+      {name:"Last chocolate / lace / beer shopping", time:"9:00am", timeType:'suggested',
+        desc:"Final souvenir run before checkout."},
+      {name:"🚆 Train: Bruges → Brussels → Paris Gare du Nord", time:"1:30pm",
+        desc:"Connecting train via Brussels to Paris. Arrives 4:05pm (2h35min total, including the Brussels connection).",
+        badge:{type:'booked', count:13},
+        note:"13 seats booked. Depart hotel by 1:00pm at the latest — Hotel Ter Duinen to Bruges station is ~20 min walk or ~5 min taxi."},
+    ]},
+  ],
+  additional:[
+    {name:"Choco-Story Bruges", desc:"Interactive museum on the history of chocolate.", fams:{hy:2}},
+    {name:"Frietmuseum", desc:"Quirky museum dedicated to Belgian fries.", fams:{hy:2}},
+  ]
+});
+
+CITIES.push({
+  id:'paris', name:'Paris', color:'var(--paris)', dateRange:'July 25–28, 2026', hotel:'Townhouse near Eiffel Tower',
+  days:[
+    { id:'jul25b', label:'July 25 (Sat) — Arrival Evening', items:[
+      {name:"🚗 Arrive Gare du Nord, transfer to townhouse", time:"4:10pm", timeType:'suggested',
+        desc:"Taxis/Ubers from the station to the townhouse — ~30–45 min depending on traffic."},
+      {name:"Arc de Triomphe — climb to top", time:"6:00pm", timeType:'suggested', fams:{he:3,hy:2,je:2,pa:2,zl:2},
+        desc:"360° Paris views from the top of Napoleon's triumphal arch.",
+        note:"Moved here from July 27, which had Île de la Cité, Marais, Montmartre, and the Arc de Triomphe all packed into one afternoon — too much ground to cover in one day. The Arc is a short hop from the townhouse near the Eiffel Tower (~25 min walk or a quick metro ride), so it fits naturally into arrival evening instead. ~€13 to climb, free to view from outside."},
+      {name:"Dinner — Les Jardins du Presbourg or Relais de l'Entrecôte (Marbeuf)", time:"7:30pm", timeType:'suggested', fams:{he:3,hy:2,je:2,pa:2,ra:2,zl:2},
+        desc:"A garden brasserie at the foot of the Arc, or a no-menu steak-frites spot nearby.",
+        note:"Les Jardins du Presbourg: garden-set brasserie literally at the foot of the Arc, lively evening atmosphere · Relais de l'Entrecôte: no-menu steak-frites spot ~10 min walk away on Rue Marbeuf — simple, casual, and easy for a group of 13."},
+      {name:"Eiffel Tower sparkle", time:"10:00pm", timeType:'suggested',
+        desc:"The tower's five-minute light show, on the hour after dark.",
+        note:"Sparkles hourly after dark — sunset is ~9:30pm in late July. ~20 min back to the townhouse area from the Arc."},
+    ]},
+    { id:'jul26', label:'July 26 (Sun) — Versailles Day', items:[
+      {name:"Palace of Versailles — Main Palace & Hall of Mirrors", time:"10:30am",
+        fams:{he:3,hy:2,je:2,pa:2,ra:2,zl:1},
+        desc:"Louis XIV's opulent royal palace, including the Hall of Mirrors.",
+        badge:{type:'booked', ref:'198586813 (Zach) & 198587067 (Jeannie)', count:12}},
+      {name:"Lunch — Angelina Versailles (palace grounds)", time:"1:00pm", timeType:'suggested', fams:{he:3,hy:2,je:2,pa:2,ra:2},
+        desc:"Café on the palace grounds, known for its rich hot chocolate."},
+      {name:"Grand Trianon + Petit Trianon + Marie-Antoinette's Estate", time:"2:30pm",
+        fams:{he:3,hy:2,je:2,pa:2,ra:2,zl:1},
+        desc:"Smaller royal retreats and Marie-Antoinette's private hamlet, within the Versailles grounds.",
+        badge:{type:'booked', detail:'included in Versailles Passport ticket', count:12},
+        note:"No separate ticket needed — the Passport ticket already booked for the main Palace (see above) also covers the full Trianon Estate. ~15–20 min walk from the main palace, or take the Petit Train."},
+      {name:"Eiffel Tower — Summit or 2nd Floor", time:"5:30pm", timeType:'suggested', fams:{he:3,hy:2,je:2,pa:2},
+        desc:"Paris's iconic 1889 iron tower.",
+        note:"~40 min back to Paris via RER C."},
+      {name:"Dinner — Brasserie Thoumieux or Au Bon Accueil", time:"7:30pm", timeType:'suggested', fams:{he:3,hy:2,pa:2,ra:2,zl:2},
+        desc:"Classic 7th-arrondissement brasserie or a refined neighborhood bistro."},
+      {name:"Trocadéro — Eiffel Tower viewpoint at sunset", time:"9:15pm", timeType:'suggested',
+        desc:"Esplanade across the river with the classic Eiffel Tower photo."},
+    ]},
+    { id:'jul27', label:'July 27 (Mon) — Paris Core Day', items:[
+      {name:"Paris Museum Pass (2-day, general admission)",
+        fams:{he:3,hy:2,je:2,pa:2,ra:2,zl:2},
+        desc:"Combined admission pass covering the day's ticketed sites below.",
+        badge:{type:'booked', count:12},
+        note:"12 passes purchased — everyone except Kasey, who's free at most sites as a 17-year-old (11 family members + Zach + Lauren = 12 paying, +Kasey = 13). Covers Louvre, Sainte-Chapelle, and Notre-Dame below."},
+      {name:"The Louvre", time:"11:30am", fams:{he:3,hy:2,je:2,pa:2,zl:2},
+        desc:"The world's largest art museum, home to the Mona Lisa and the Venus de Milo.",
+        badge:{type:'booked', ref:'3 pass refs', detail:'part of museum pass', count:12},
+        note:"12 booked (11 pass-holders + Kasey). Ramsey & Keeler's form shows this unselected, yet the count implies 1 more than families + Zach & Lauren explain — possibly one of them attending after all."},
+      {name:"Shakespeare and Company bookshop", time:"1:15pm", timeType:'suggested',
+        desc:"Legendary English-language bookshop across the river from Notre-Dame.", note:"Short walk across the river from the Louvre."},
+      {name:"Lunch — Shakespeare & Co Café or Café de Flore", time:"1:30pm", timeType:'suggested', fams:{he:3,hy:2,pa:2},
+        desc:"The bookshop's café or the iconic 1880s Left Bank people-watching spot."},
+      {name:"Sainte-Chapelle", time:"3:30pm", fams:{he:3,hy:2,je:2,pa:2,ra:2,zl:2},
+        desc:"Gothic chapel famous for its floor-to-ceiling stained glass.",
+        badge:{type:'booked', detail:'part of museum pass', count:13},
+        note:"Booked for the full group of 13. Dennis & Jeannie's form didn't explicitly select this, but they're included here since the full-group ticket covers all 13."},
+      {name:"Notre-Dame de Paris", time:"Staggered entry: 4:15pm (8 + Kasey) & 4:30pm (4)",
+        fams:{he:3,hy:2,je:2,pa:2,ra:2,zl:2},
+        desc:"Gothic cathedral, reopened in December 2024 after the fire restoration.",
+        badge:{type:'booked', detail:'part of museum pass', count:13},
+        note:"13 booked = full group. All 5 families (11) + Zach & Lauren (2). Right next to Sainte-Chapelle."},
+      {name:"Option A: Le Marais + Place des Vosges", time:"5:15pm", timeType:'suggested',
+        desc:"The historic Jewish Quarter and Paris's oldest planned square.",
+        note:"Choose Option A or B — after the timed Sainte-Chapelle/Notre-Dame entries, fitting in both plus Montmartre left the day too tight. Marais is close by (10–15 min from Notre-Dame) and keeps the group closer to dinner in the 7th arr. (~15–20 min back)."},
+      {name:"Option B: Sacré-Cœur + Montmartre", time:"5:15pm", timeType:'suggested',
+        desc:"Hilltop basilica and the artists' quarter of Montmartre.",
+        note:"Choose Option A or B. Montmartre is further out (~25–30 min by metro from Notre-Dame) and adds a longer trip back to the 7th arr. for dinner (~30–35 min) — worth it for the view and Basilica, but leaves less buffer before the 8:15pm reservation."},
+      {name:"Dinner — L'Ami Jean or Bistrot Paul Bert", time:"8:15pm", timeType:'suggested', fams:{he:3,hy:2,pa:2,ra:2,zl:2},
+        desc:"Lively Basque-influenced bistro or a quintessential Paris bistro."},
+    ]},
+  ],
+  additional:[
+    {name:"Paris Catacombs", desc:"Underground ossuary lined with the remains of six million Parisians.", fams:{hy:2}},
+  ]
+});
+
+const DEPARTURE_NOTE = "July 28 (Tue) — Departure Day. No items submitted in the planning forms or bookings.txt for this day.";
+
+function escHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// Extracts the first h:mm am/pm found in a time string, for chronological sorting within a day.
+function timeToMinutes(str){
+  if(!str) return -1;
+  const m = str.match(/(\d{1,2}):(\d{2})\s*(am|pm)/i);
+  if(!m) return 9999;
+  let h = parseInt(m[1], 10) % 12;
+  if(/pm/i.test(m[3])) h += 12;
+  return h * 60 + parseInt(m[2], 10);
+}
+
+// Cancelled/sold-out items have no real time slot — sort them to the end of the day rather than the start.
+function sortKey(item){
+  return item.status === 'cancelled' ? Infinity : timeToMinutes(item.time);
+}
+
+function renderChips(fams){
+  if(!fams) return '';
+  return FAMILIES.filter(f => fams[f.id] !== undefined).map(f => {
+    const n = fams[f.id];
+    return `<span class="fchip" data-fam="${f.id}" style="--c:${f.color}">${escHtml(f.label.split(',')[0].split(' & ')[0])} ×${n}</span>`;
+  }).join('');
+}
+
+function renderBadge(b){
+  if(!b) return '';
+  if(b.type === 'booked'){
+    const parts = [];
+    if(b.ref) parts.push(`Ref ${escHtml(b.ref)}`);
+    if(b.detail) parts.push(escHtml(b.detail));
+    if(b.count) parts.push(`${b.count} confirmed`);
+    return `<span class="badge booked">✓ Booked</span><span class="booking-meta">${parts.join(' · ')}</span>`;
+  }
+  const link = b.link ? `<a class="book-link" href="${escHtml(b.link)}" target="_blank" rel="noopener">Book →</a>` : '';
+  return `<span class="badge todo">◔ To book</span>${link}`;
+}
+
+function renderItem(item){
+  const famIds = item.fams ? Object.keys(item.fams).filter(k => item.fams[k] > 0) : [];
+  const isTransit = item.name.startsWith('🚆') || item.name.startsWith('🚗');
+  const cancelled = item.status === 'cancelled';
+  const timeClass = item.timeType === 'suggested' ? ' suggested' : '';
+  return `<div class="item${isTransit ? ' transit-item' : ''}${cancelled ? ' cancelled' : ''}" data-fams="${famIds.join(',')}">
+    <div class="item-top">
+      <div class="item-name">${escHtml(item.name)}</div>
+      ${item.time ? `<div class="item-time${timeClass}">${escHtml(item.time)}</div>` : ''}
+    </div>
+    ${item.desc ? `<div class="item-desc">${escHtml(item.desc)}</div>` : ''}
+    ${(item.badge || item.fams || cancelled) ? `<div class="badges">${cancelled ? '<span class="badge cancelled">✕ Sold out</span>' : renderBadge(item.badge)}</div>` : ''}
+    ${item.fams ? `<div class="chiprow">${renderChips(item.fams)}</div>` : ''}
+    ${item.note ? `<div class="item-note">${escHtml(item.note)}</div>` : ''}
+  </div>`;
+}
+
+function renderCity(city){
+  const daysHtml = city.days.map(day => {
+    const sorted = [...day.items].sort((a,b) => sortKey(a) - sortKey(b));
+    return `
+    <div class="day-card">
+      <div class="day-hd">${escHtml(day.label)}</div>
+      ${sorted.map(renderItem).join('')}
+    </div>`;
+  }).join('');
+
+  const flexHtml = (city.additional && city.additional.length) ? `
+    <div class="flex-block">
+      <div class="fbt">Also planning — flexible / unscheduled</div>
+      ${city.additional.map(a => `<div class="flex-item">
+        <span style="font-weight:600">${escHtml(a.name)}</span>
+        ${a.desc ? `<div class="item-desc" style="margin-top:.15rem">${escHtml(a.desc)}</div>` : ''}
+        <div class="chiprow" style="margin-top:.25rem">${renderChips(a.fams)}</div>
+        ${a.note ? `<div class="item-note">${escHtml(a.note)}</div>` : ''}
+      </div>`).join('')}
+    </div>` : '';
+
+  const noteHtml = city.note ? `<div class="city-note">${escHtml(city.note)}</div>` : '';
+
+  return `<div class="city-block">
+    <div class="city-head" style="background:${city.color}">
+      <h2>${escHtml(city.name)}</h2>
+      <div class="meta">${escHtml(city.dateRange)} · ${escHtml(city.hotel)}</div>
+    </div>
+    ${noteHtml}
+    ${daysHtml}
+    ${flexHtml}
+  </div>`;
+}
+
+function renderOverview(){
+  const keys = FAMILIES.map(f => `
+    <div class="fam-key-item" style="--c:${f.color}">
+      <div>
+        <div class="fkn">${escHtml(f.label)}</div>
+        <div class="fkm">${escHtml(f.members)}</div>
+      </div>
+    </div>`).join('');
+  return `
+    <h2>Trip at a Glance</h2>
+    <p>13 travelers, 5 planning forms, 4 stops. Booked-ticket details below come straight from <code>bookings.txt</code>;
+    family chips come from each family's own planning form. Where a booking's headcount runs ahead of what the forms add up to,
+    the gap is attributed to Zach &amp; Lauren, who traveled with the group but didn't submit a form. Each day is sorted
+    chronologically, with suggested times (italic) filling the gaps around confirmed bookings and accounting for rough
+    walking/transit time between stops.</p>
+    <div class="fam-key">${keys}</div>
+  `;
+}
+
+document.getElementById('overviewCard').innerHTML = renderOverview();
+document.getElementById('cities').innerHTML =
+  CITIES.map(renderCity).join('') +
+  `<div class="transit-divider"><span class="ti">✈️</span><div><div class="td-label">${escHtml(DEPARTURE_NOTE)}</div></div></div>`;
+
+// Family filter toggles
+const famToggles = document.getElementById('famToggles');
+famToggles.innerHTML = FAMILIES.map(f =>
+  `<button class="fam-btn" data-fam="${f.id}" style="--c:${f.color}"><span class="dot"></span>${escHtml(f.label)}</button>`
+).join('') + `<button class="reset-btn" id="resetBtn">Show all</button>`;
+
+let active = new Set();
+
+function applyFilter(){
+  document.querySelectorAll('.fam-btn').forEach(b => b.classList.toggle('active', active.has(b.dataset.fam)));
+  document.querySelectorAll('.fchip').forEach(c => c.classList.toggle('selected', active.has(c.dataset.fam)));
+  document.querySelectorAll('.item').forEach(el => {
+    if(active.size === 0){ el.classList.remove('dim','match'); el.style.removeProperty('--hl'); return; }
+    const fams = (el.dataset.fams || '').split(',').filter(Boolean);
+    const hit = fams.find(f => active.has(f));
+    if(hit){
+      el.classList.remove('dim'); el.classList.add('match');
+      el.style.setProperty('--hl', `var(--${hit})`);
+    } else {
+      el.classList.add('dim'); el.classList.remove('match');
+      el.style.removeProperty('--hl');
+    }
+  });
+}
+
+famToggles.addEventListener('click', e => {
+  const btn = e.target.closest('.fam-btn');
+  if(btn){
+    const id = btn.dataset.fam;
+    active.has(id) ? active.delete(id) : active.add(id);
+    applyFilter();
+  }
+  if(e.target.id === 'resetBtn'){ active.clear(); applyFilter(); }
+});
+</script>
+</body>
+</html>
