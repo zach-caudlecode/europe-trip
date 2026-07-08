@@ -421,7 +421,7 @@ CITIES.push({
     {name:"Paris Museum Pass (2-day, general admission)",
       fams:{he:3,hy:2,je:2,pa:2,ra:2,zl:2},
       desc:"Combined admission pass — covers the Louvre, Sainte-Chapelle, and Notre-Dame (see July 27) plus a wide range of other Paris museums and monuments.",
-      badge:{type:'booked', count:12},
+      badge:{type:'booked', count:12, link:'https://www.parismuseumpass.fr/en/liste-sites', linkLabel:'Included sites →'},
       note:"12 passes purchased — everyone except Kasey, who's free at most sites as a 17-year-old (11 family members + Zach + Lauren = 12 paying, +Kasey = 13). Valid for 48 hours from the first time it's scanned, so however the group starts using it, it'll cover the entire Paris stay (July 25–28)."},
   ],
   days:[
@@ -431,7 +431,7 @@ CITIES.push({
       {name:"Arc de Triomphe — climb to top", time:"6:00pm", timeType:'suggested', fams:{he:3,hy:2,je:2,pa:2,zl:2},
         desc:"360° Paris views from the top of Napoleon's triumphal arch.",
         badge:{type:'todo', link:'https://www.arcdetriomphe.monuments-nationaux.fr'},
-        note:"Moved here from July 27, which had Île de la Cité, Marais, Montmartre, and the Arc de Triomphe all packed into one afternoon — too much ground to cover in one day. The Arc is a short hop from the townhouse near the Eiffel Tower (~25 min walk or a quick metro ride), so it fits naturally into arrival evening instead. ~€13 to climb, free to view from outside."},
+        note:"Moved here from July 27, which had Île de la Cité, Marais, Montmartre, and the Arc de Triomphe all packed into one afternoon — too much ground to cover in one day. The Arc is a short hop from the townhouse near the Eiffel Tower (~25 min walk or a quick metro ride), so it fits naturally into arrival evening instead. ~€13 to climb, free to view from outside. Should be accessible with the Paris Museum Pass (see the pass's included-sites list above) — worth double-checking against the booking link here too."},
       {name:"Dinner — Les Jardins du Presbourg or Relais de l'Entrecôte (Marbeuf)", time:"7:30pm", timeType:'suggested',
         fams:{he:3,hy:2,je:2,pa:2,ra:2,zl:2},
         badge:{type:'todo', link:'https://bookings.zenchef.com/results?pid=1001&rid=353606'},
@@ -536,7 +536,8 @@ function renderBadge(b){
     if(b.ref) parts.push(`Ref ${escHtml(b.ref)}`);
     if(b.detail) parts.push(escHtml(b.detail));
     if(b.count) parts.push(`${b.count} confirmed`);
-    return `<span class="badge booked">✓ Booked</span><span class="booking-meta">${parts.join(' · ')}</span>`;
+    const bookedLink = b.link ? `<a class="book-link" href="${escHtml(b.link)}" target="_blank" rel="noopener">${escHtml(b.linkLabel || 'Details →')}</a>` : '';
+    return `<span class="badge booked">✓ Booked</span><span class="booking-meta">${parts.join(' · ')}</span>${bookedLink}`;
   }
   const link = b.link ? `<a class="book-link" href="${escHtml(b.link)}" target="_blank" rel="noopener">Book →</a>` : '';
   return `<span class="badge todo">◔ To book</span>${link}`;
