@@ -28,6 +28,10 @@ body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--
 .hero h1{font-size:1.6rem;font-weight:700;letter-spacing:-.02em}
 .hero p{margin-top:.4rem;color:#B9C6DA;font-size:.9rem}
 
+.resources-bar{background:var(--surface);border-bottom:1px solid var(--grid);text-align:center;padding:.6rem 1rem}
+.resources-bar a{color:var(--warn);font-weight:700;font-size:.85rem;text-decoration:underline;text-underline-offset:2px;margin:0 .5rem;white-space:nowrap}
+.resources-bar a:hover{opacity:.75}
+
 .filterbar{position:sticky;top:0;z-index:50;background:var(--surface);border-bottom:1px solid var(--grid);
   box-shadow:0 1px 6px rgba(0,0,0,.06)}
 .filterbar-inner{max-width:880px;margin:0 auto;padding:.7rem 1rem}
@@ -146,6 +150,10 @@ footer{text-align:center;font-size:.75rem;color:var(--muted);padding:2rem 1rem 0
   <p>July 15–28, 2026 · 13 Travelers · London → Bath → Bruges → Paris</p>
 </div>
 
+<div class="resources-bar">
+  <a href="https://drive.google.com/drive/folders/1jzdCaOPu35GvuPNB-aF9-4XWuWsGWgbT?usp=drive_link" target="_blank" rel="noopener">📁 All E-Tickets — Google Drive</a>
+</div>
+
 <div class="filterbar">
   <div class="filterbar-inner">
     <div class="filter-label">Filter by family — tap to highlight what they're committed to</div>
@@ -164,10 +172,9 @@ footer{text-align:center;font-size:.75rem;color:var(--muted);padding:2rem 1rem 0
   <div class="overview" id="overviewCard"></div>
   <div id="cities"></div>
   <footer>
-    Built from the 5 family planning forms + bookings.txt. Zach &amp; Lauren submitted no planning form of their own —
-    their commitments are inferred only where a confirmed booking's headcount exceeds what the 5 forms add up to.
-    Times without a booking or bookings.txt reference are suggested pacing (shown in italics), sequenced with rough
-    walking/transit gaps between stops — treat them as a starting point, not a reservation.
+    Built from the 5 family planning forms + bookings info. Times without a booking reference are 
+	suggested pacing (shown in italics), sequenced with rough walking/transit gaps between stops 
+	— treat them as a starting point, not a reservation.
   </footer>
 </div>
 
@@ -240,7 +247,10 @@ const CITIES = [
       {name:"Harry Potter & the Cursed Child (Parts 1 & 2)", time:"Part 1: 2:00pm · Part 2: 7:00pm",
         fams:{he:3,je:1,pa:2},
         desc:"Two-part stage play continuing the Harry Potter story, at the Palace Theatre.",
-        badge:{type:'booked', ref:'U000-000V-2ZV6-LDNX', count:6},
+        badge:{type:'booked', ref:'U000-000V-2ZV6-LDNX', count:6, links:[
+          {href:'https://ticketing.nimaxtheatres.com/shop/tickets/bundle/90bb35fe-9f18-4243-8016-05950e2c5413/event/1756076', label:'Part 1 tickets →'},
+          {href:'https://ticketing.nimaxtheatres.com/shop/tickets/bundle/b16921ca-763e-4caf-aaf8-a506587e5c7e/event/1756089', label:'Part 2 tickets →'},
+        ]},
         note:"6 tickets booked — matches exactly: Heather's family (3) + Jeannie only (1) + Hector & Pat (2). Dennis is sitting this one out and doing something else with anyone else not attending."},
       {name:"Dinner between shows — The Ivy or J. Sheekey", time:"5:00pm", timeType:'suggested', fams:{he:3,hy:2,je:1,pa:2,ra:2},
         desc:"Covent Garden institution or a renowned seafood spot.",
@@ -557,8 +567,9 @@ function renderBadge(b){
     if(b.ref) parts.push(`Ref ${escHtml(b.ref)}`);
     if(b.detail) parts.push(escHtml(b.detail));
     if(b.count) parts.push(`${b.count} confirmed`);
-    const bookedLink = b.link ? `<a class="book-link" href="${escHtml(b.link)}" target="_blank" rel="noopener">${escHtml(b.linkLabel || 'Details →')}</a>` : '';
-    return `<span class="badge booked">✓ Booked</span><span class="booking-meta">${parts.join(' · ')}</span>${bookedLink}`;
+    const links = b.links || (b.link ? [{href: b.link, label: b.linkLabel || 'Details →'}] : []);
+    const bookedLinks = links.map(l => `<a class="book-link" href="${escHtml(l.href)}" target="_blank" rel="noopener">${escHtml(l.label)}</a>`).join(' ');
+    return `<span class="badge booked">✓ Booked</span><span class="booking-meta">${parts.join(' · ')}</span>${bookedLinks}`;
   }
   const link = b.link ? `<a class="book-link" href="${escHtml(b.link)}" target="_blank" rel="noopener">Book →</a>` : '';
   return `<span class="badge todo">◔ To book</span>${link}`;
